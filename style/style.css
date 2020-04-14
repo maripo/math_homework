@@ -1,0 +1,53 @@
+body {
+  font-family: "YuKyokasho","Kozuka Gothic Pro",sans-serif;
+  color:#555;
+}
+.page {
+  float:left;
+  margin:0;
+  width: 50%;
+  box-sizing: border-box;
+}
+.page:nth-child(2n) {
+  /* Left */
+}
+.page:nth-child(2n+1)
+  /* Right */ {
+  clear: left;
+}
+/* Problem */
+.problem {
+  font-size:0;
+  line-height:76px;
+}
+.problem > div {
+}
+.problem__number {
+  font-size: 24px;
+  display:inline-block;
+  width:80px;
+  text-align: center;
+  vertical-align: middle;
+  color:#888;
+}
+.problem__first {
+  font-size: 48px;
+  display:inline-block;
+  width:64px;
+  text-align: right;
+  vertical-align: middle;
+}
+.problem__second {
+  font-size: 48px;
+  display:inline-block;
+  vertical-align: middle;
+  width:44px;
+  
+}
+.problem__mark {
+  font-size: 48px;
+  display:inline-block;
+  width:64px;
+  text-align: center;
+  vertical-align: middle;
+}

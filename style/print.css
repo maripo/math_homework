@@ -1,0 +1,28 @@
+@media print {  
+  body {
+  }
+  .page {
+    page-break-inside: avoid;
+    padding-top :1cm;
+  }
+  .page:nth-child(2n+1) {
+    /* Left */
+    padding-left:1.5cm;
+    page-break-before: always;
+  }
+  .page:nth-child(2n) {
+    /* Right */
+    page-break-after: always;
+    padding-left:2.5cm;
+  }
+  .problem {
+  }
+  .problem__number {
+  }
+  .problem__first {
+  }
+  .problem__second {
+  }
+  .problem__mark {
+  }
+}

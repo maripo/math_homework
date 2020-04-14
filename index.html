@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/print.css">
+    <title>Math Homework</title>
+  </head>
+  <body>
+    <div id="pages"></div>
+    <textarea id="conf" cols="80" rows="8">
+{
+    "first" : {"from":1, "to":19, "randCoeff":0.25, "resetRandom":true},
+    "second" : {"from":4, "to":4},
+    "randomizeSecond" : false,
+    "pages" : 4
+  }
+</textarea><br/>
+    <script type="text/javascript" src="index.js"></script>
+    <input type="button" value="generate" onclick="javascript:generateHtml()"/>
+    <input type="button" value="reset" onclick="javascript:reset()"/>
+  </body>
+</html>
