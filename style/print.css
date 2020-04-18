@@ -3,17 +3,28 @@
   }
   .page {
     page-break-inside: avoid;
-    padding-top :1cm;
+    /*border: 1px solid #aaa;*/
   }
   .page:nth-child(2n+1) {
     /* Left */
-    padding-left:1.5cm;
     page-break-before: always;
+    padding-left:0.5cm;
+    padding-right:1cm;
   }
   .page:nth-child(2n) {
     /* Right */
     page-break-after: always;
-    padding-left:2.5cm;
+    padding-left:1.5cm;
+  }
+  .page__header {
+    
+  }
+  .page__body {
+    padding-left:1.0cm;
+    
+  }
+  .page__body {
+    
   }
   .problem {
   }

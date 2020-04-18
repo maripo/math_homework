@@ -1,6 +1,7 @@
 body {
   font-family: "YuKyokasho","Kozuka Gothic Pro",sans-serif;
-  color:#555;
+  color:#666;
+  margin-top:0;
 }
 .page {
   float:left;
@@ -15,17 +16,47 @@ body {
   /* Right */ {
   clear: left;
 }
+.page__header {
+  height: 54px;
+}
+
+.num-ref {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  
+}
+.num-ref__num {
+  width:100%;
+  border-left:1px solid #888;
+  border-top:1px solid #888;
+  border-bottom:1px solid #888;
+  text-align: center;
+  font-size: 1.4em;
+}
+.num-ref__num:last-child {
+  border-right:1px solid #888;
+}
+.page__body {
+  padding-left:2em;
+}
+.page__footer {
+  height: 48px;
+}
 /* Problem */
 .problem {
   font-size:0;
   line-height:76px;
+}
+.problem--compact {
+  line-height: 68px!important;
 }
 .problem > div {
 }
 .problem__number {
   font-size: 24px;
   display:inline-block;
-  width:80px;
+  width:60px;
   text-align: center;
   vertical-align: middle;
   color:#888;

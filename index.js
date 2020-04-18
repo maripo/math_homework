@@ -10,19 +10,27 @@ class PugRenderer {
   }
   renderSuiteFooter () {
   }
-  renderPageHeader () {
+  renderPageHeader (header) {
     console.log("  .page");
   }
-  renderPageFooter() {
-    
+  renderPageFooter(header) {
   }
-  renderProblem(number, first, second) {
+  renderProblem(option) {
+    /*
+    {
+      index: problemIndex+1,
+      first: first,
+      second: second,
+      hasHeader: hasHeader,
+      hasFooter: hasFooter
+    }
+    */
     const indent = "    ";
     console.log("%s.problem", indent);
-    console.log("%s  .problem__number (%d)", indent, number);
-    console.log("%s  .problem__first %d", indent, first);
+    console.log("%s  .problem__number (%d)", indent, option.index);
+    console.log("%s  .problem__first %d", indent, option.first);
     console.log("%s  .problem__mark +", indent);
-    console.log("%s  .problem__second %d", indent, second);
+    console.log("%s  .problem__second %d", indent, option.second);
     console.log("%s  .problem__mark =", indent);
   }
 }
@@ -42,20 +50,45 @@ class HtmlRenderer {
   }
   renderSuiteFooter () {
   }
-  renderPageHeader () {
+  renderPageHeader (content) {
     this.page = this.createElement("", "page");
+    if (content!=null) {
+      const header = this.createElement("", "page__header");
+      const numRef = this.createElement("", "num-ref");
+      let i = content.from;
+      while (i <= content.to) {
+        numRef.appendChild(this.createElement(i, "num-ref__num"));
+        i += 1;
+      }
+      header.appendChild(numRef);
+      this.page.appendChild(header);
+      
+    }
+    this.pageBody = this.createElement("", "page__body");
+    this.page.appendChild(this.pageBody);
   }
-  renderPageFooter() {
+  renderPageFooter(content) {
+    // TODO
     this.root.appendChild(this.page);
   }
-  renderProblem(number, first, second) {
-    const element = this.createElement("", "problem");
-    element.appendChild(this.createElement(("("+number+")"), "problem__number"));
-    element.appendChild(this.createElement(first, "problem__first"));
+  renderProblem(option) {
+    /*
+    {
+      index: problemIndex+1,
+      first: first,
+      second: second,
+      hasHeader: hasHeader,
+      hasFooter: hasFooter
+    }
+    */
+    const compact = option.hasHeader || option.hasFooter;
+    const element = this.createElement("", "problem" + ((compact) ? " problem--compact":" problem--normal"));
+    element.appendChild(this.createElement(("("+option.index+")"), "problem__number"));
+    element.appendChild(this.createElement(option.first, "problem__first"));
     element.appendChild(this.createElement("+", "problem__mark"));
-    element.appendChild(this.createElement(second, "problem__second"));
+    element.appendChild(this.createElement(option.second, "problem__second"));
     element.appendChild(this.createElement("=", "problem__mark"));
-    this.page.appendChild(element);
+    this.pageBody.appendChild(element);
   }
 }
 
@@ -126,12 +159,19 @@ class WeighedRandom {
   }
 }
 
-const generatePage = (first, second, renderer) => {
-  renderer.renderPageHeader();
+const generatePage = (first, second, renderer, header, footer) => {
+  renderer.renderPageHeader(header);
   for (let problemIndex=0; problemIndex<PROBLEMS_PER_PAGE; problemIndex++) {
     const valFirst = first.pick();
     const valSecond = second.pick();
-    renderer.renderProblem(problemIndex+1, valFirst, valSecond);
+    // renderer.renderProblem(problemIndex+1, valFirst, valSecond);
+    renderer.renderProblem({
+      index: problemIndex+1,
+      first: valFirst,
+      second: valSecond,
+      hasHeader: header!=null,
+      hasFooter: footer!=null
+    })
   }
   renderer.renderPageFooter();
 };
@@ -142,7 +182,7 @@ const generateSuite = (option, renderer) => {
   if (option.randomizeSecond) {
     let second = new WeighedRandom(option.second);
     for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-      generatePage(first, second, renderer);
+      generatePage(first, second, renderer, option.header, option.footer);
       if (option.first.resetRandom) {
         first.reset();
       }
@@ -152,7 +192,7 @@ const generateSuite = (option, renderer) => {
     for (let pageIndex=0; pageIndex<pages; pageIndex++) {
       let secondVal = secondRand.pick();
       let second = new WeighedRandom({from:secondVal, to:secondVal});
-      generatePage(first, second, renderer);
+      generatePage(first, second, renderer, option.header, option.footer);
       if (option.first.resetRandom) {
         first.reset();
       }
@@ -172,12 +212,14 @@ const generatePug = () => {
 };
 const generateHtml = () => {
   const str = document.getElementById("conf").value;
+  let option;
   try {
-    const option = JSON.parse(str);
-    generateSuite(option, new HtmlRenderer());
-    localStorage.setItem('mathHomework', str);
+    option = JSON.parse(str);
   } catch (e) {
+    return;
   }
+  generateSuite(option, new HtmlRenderer());
+  localStorage.setItem('mathHomework', str);
 }
 const reset = () => {
   localStorage.removeItem('mathHomework');
