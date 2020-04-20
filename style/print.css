@@ -3,7 +3,6 @@
   }
   .page {
     page-break-inside: avoid;
-    /*border: 1px solid #aaa;*/
   }
   .page:nth-child(2n+1) {
     /* Left */

@@ -232,5 +232,3 @@ window.onload = () => {
     document.getElementById("conf").value = saved;
   }
 }
-// generatePug();
-//generateHtml();
