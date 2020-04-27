@@ -88,6 +88,9 @@ class HtmlRenderer {
     element.appendChild(this.createElement("+", "problem__mark"));
     element.appendChild(this.createElement(option.second, "problem__second"));
     element.appendChild(this.createElement("=", "problem__mark"));
+    if (option.hasBoxes) {
+      element.appendChild(this.createElement("&nbsp;", "problem__box"));
+    }
     this.pageBody.appendChild(element);
   }
 }
@@ -159,18 +162,18 @@ class WeighedRandom {
   }
 }
 
-const generatePage = (first, second, renderer, header, footer) => {
+const generatePage = (first, second, renderer, header, footer, box) => {
   renderer.renderPageHeader(header);
   for (let problemIndex=0; problemIndex<PROBLEMS_PER_PAGE; problemIndex++) {
     const valFirst = first.pick();
     const valSecond = second.pick();
-    // renderer.renderProblem(problemIndex+1, valFirst, valSecond);
     renderer.renderProblem({
       index: problemIndex+1,
       first: valFirst,
       second: valSecond,
       hasHeader: header!=null,
-      hasFooter: footer!=null
+      hasFooter: footer!=null,
+      hasBoxes: box==true
     })
   }
   renderer.renderPageFooter();
@@ -182,7 +185,7 @@ const generateSuite = (option, renderer) => {
   if (option.randomizeSecond) {
     let second = new WeighedRandom(option.second);
     for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-      generatePage(first, second, renderer, option.header, option.footer);
+      generatePage(first, second, renderer, option.header, option.footer, option.box);
       if (option.first.resetRandom) {
         first.reset();
       }
@@ -192,7 +195,7 @@ const generateSuite = (option, renderer) => {
     for (let pageIndex=0; pageIndex<pages; pageIndex++) {
       let secondVal = secondRand.pick();
       let second = new WeighedRandom({from:secondVal, to:secondVal});
-      generatePage(first, second, renderer, option.header, option.footer);
+      generatePage(first, second, renderer, option.header, option.footer, option.box);
       if (option.first.resetRandom) {
         first.reset();
       }
