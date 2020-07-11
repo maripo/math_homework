@@ -3,7 +3,7 @@ class BasicSubtraction {
   }
   _generatePage (first, second, problemsPerPage, option) {
     let problems = [];
-    for (let problemIndex=0; problemIndex<problemsPerPage; problemIndex++) {
+    for (let problemIndex=0; problemIndex<problemsPerPage ; problemIndex++) {
       const valFirst = first.pick();
       const valSecond = second.pick();
       const answer = valFirst - valSecond;

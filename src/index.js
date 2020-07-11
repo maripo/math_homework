@@ -44,8 +44,7 @@ class HtmlRenderer {
       second: second
     }
     */
-    const compact = false; //option.hasHeader || option.hasFooter;
-    const element = this.createElement("", "problem" + ((compact) ? " problem--compact":" problem--normal"));
+    const element = this.createElement("", "problem problem-" + pageIndex);
     items.forEach((item, index)=>{
       let classes = ["problem__item"];
       classes.push("problem__item--" + item.classId());
@@ -58,13 +57,19 @@ class HtmlRenderer {
   resetGrid () {
     document.getElementById("style").innerHTML = "";
   }
-  setGrid (pageIndex, maxWidths) {
+  setGrid (pageIndex, problemsPerPage, maxWidths) {
+    const MIN_LINE_HEIGHT_RATIO = 1.6;
+    const MAX_FONT_SIZE = 48;
     maxWidths.forEach((width, colIndex)=>{
       const emValue = width * 0.70;
       const className = "c-" + pageIndex + "-" + colIndex;
-      const line = "." + className + "{width:" + emValue + "em;}"
+      const line = "." + className + "{width:" + emValue + "em;}";
       document.getElementById("style").innerHTML += line;
     });
+    // TODO consider footer & header!
+    const fontSize = Math.min(MAX_FONT_SIZE, (720-54) / (problemsPerPage * MIN_LINE_HEIGHT_RATIO));
+    const line = ".problem-" + pageIndex + "{font-size:" + fontSize + "px;}";
+    document.getElementById("style").innerHTML += line;
   }
 }
 
@@ -129,7 +134,6 @@ class WeighedRandom {
       console.log(this.nums.join(","))
     } else {
       this.nums.splice(nextIndex, 0, num);
-      
     }
     return num;
   }
@@ -228,7 +232,7 @@ const generateSuite = (option, generator, renderer) => {
       });
     });
     console.log(maxWidths);
-    renderer.setGrid(pageIndex, maxWidths);
+    renderer.setGrid(pageIndex, problemsPerPage, maxWidths);
     // Geometry -> Stylesheet
     
     page.forEach((problem, problemIndex)=>{

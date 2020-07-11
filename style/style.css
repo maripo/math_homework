@@ -51,10 +51,10 @@ body {
 /* Problem */
 .problem {
   flex: 1;
-  font-size:0;
   display:flex;
   flex-direction: row;
-  align-items:center;;
+  align-items:center;
+  /*font-size:48px;*/
 }
 .problem > div {
 }
@@ -64,21 +64,21 @@ body {
   display:block;
   font-size: 24px;
   line-height: 100%;
-  margin:0 0.3rem;
+  margin:0 0.3em;
 }
 
 /* Variants */
 .problem__item--index {
-  font-size: 24px;
+  font-size: 50%;
 }
 .problem__item--number {
-  font-size: 48px;
+  font-size: 100%;
 }
 .problem__item--operand {
-  font-size: 48px;
+  font-size: 100%;
 }
 .problem__item--box {
-  font-size: 48px;
+  font-size: 100%;
   border: 1px solid #aaa;
   min-height:1.2em;
 }
