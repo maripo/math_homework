@@ -1,40 +1,6 @@
 const DEFAULT_PAGES = 2;
 const PROBLEMS_PER_PAGE = 8;
 
-class PugRenderer {
-  constructor () {
-  }
-  renderSuiteHeader () {
-    console.log("extends ./layout");
-    console.log("block pages");
-  }
-  renderSuiteFooter () {
-  }
-  renderPageHeader (header) {
-    console.log("  .page");
-  }
-  renderPageFooter(header) {
-  }
-  renderProblem(option) {
-    /*
-    {
-      index: problemIndex+1,
-      first: first,
-      second: second,
-      hasHeader: hasHeader,
-      hasFooter: hasFooter
-    }
-    */
-    const indent = "    ";
-    console.log("%s.problem", indent);
-    console.log("%s  .problem__number (%d)", indent, option.index);
-    console.log("%s  .problem__first %d", indent, option.first);
-    console.log("%s  .problem__mark +", indent);
-    console.log("%s  .problem__second %d", indent, option.second);
-    console.log("%s  .problem__mark =", indent);
-  }
-}
-
 class HtmlRenderer {
   constructor () {
     this.root = document.body;//document.getElementById("pages");
@@ -68,30 +34,37 @@ class HtmlRenderer {
     this.page.appendChild(this.pageBody);
   }
   renderPageFooter(content) {
-    // TODO
     this.root.appendChild(this.page);
   }
-  renderProblem(option) {
+  renderProblem(items, pageIndex, problemIndex) {
     /*
     {
       index: problemIndex+1,
       first: first,
-      second: second,
-      hasHeader: hasHeader,
-      hasFooter: hasFooter
+      second: second
     }
     */
-    const compact = option.hasHeader || option.hasFooter;
+    const compact = false; //option.hasHeader || option.hasFooter;
     const element = this.createElement("", "problem" + ((compact) ? " problem--compact":" problem--normal"));
-    element.appendChild(this.createElement(("("+option.index+")"), "problem__number"));
-    element.appendChild(this.createElement(option.first, "problem__first"));
-    element.appendChild(this.createElement("+", "problem__mark"));
-    element.appendChild(this.createElement(option.second, "problem__second"));
-    element.appendChild(this.createElement("=", "problem__mark"));
-    if (option.hasBoxes) {
-      element.appendChild(this.createElement("&nbsp;", "problem__box"));
-    }
+    items.forEach((item, index)=>{
+      let classes = ["problem__item"];
+      classes.push("problem__item--" + item.classId());
+      classes.push("c-" + pageIndex + "-" +index);
+      classes.push("a-" + item.align());
+      element.appendChild(this.createElement(item.content(), classes.join(" ")));
+    });
     this.pageBody.appendChild(element);
+  }
+  resetGrid () {
+    document.getElementById("style").innerHTML = "";
+  }
+  setGrid (pageIndex, maxWidths) {
+    maxWidths.forEach((width, colIndex)=>{
+      const emValue = width * 0.70;
+      const className = "c-" + pageIndex + "-" + colIndex;
+      const line = "." + className + "{width:" + emValue + "em;}"
+      document.getElementById("style").innerHTML += line;
+    });
   }
 }
 
@@ -162,76 +135,130 @@ class WeighedRandom {
   }
 }
 
-const generatePage = (first, second, renderer, header, footer, box) => {
-  renderer.renderPageHeader(header);
-  for (let problemIndex=0; problemIndex<PROBLEMS_PER_PAGE; problemIndex++) {
-    const valFirst = first.pick();
-    const valSecond = second.pick();
-    renderer.renderProblem({
-      index: problemIndex+1,
-      first: valFirst,
-      second: valSecond,
-      hasHeader: header!=null,
-      hasFooter: footer!=null,
-      hasBoxes: box==true
-    })
+
+/* Items */
+class ItemIndex {
+  constructor (index) {
+    this.index = index;
+    this.label = "(" + (index+1) + ")";
   }
-  renderer.renderPageFooter();
-};
-const generateSuite = (option, renderer) => {
+  align () {
+    return 'center';
+  }
+  relativeWidth () {
+    return this.label.length;
+  }
+  content () {
+    return this.label;
+  }
+  classId () {
+    return "index";
+  }
+}
+class ItemOperand {
+  constructor (character) {
+    this.character = character;
+  }
+  align () {
+    return 'center';
+  }
+  relativeWidth () {
+    return 1.1;
+  }
+  content () {
+      return this.character;
+  }
+  classId () {
+    return "operand";
+  }
+}
+class ItemNumber {
+  constructor (value) {
+    // this.value = value;
+    this.value = value;
+  }
+  align () {
+    return 'right';
+  }
+  relativeWidth () {
+    return this.content().length;
+  }
+  content () {
+    return ''+ this.value;
+  }
+  classId () {
+    return "number";
+  }
+}
+class ItemBox {
+  constructor (answer) {
+    this.size = (''+answer).length;
+  }
+  align () {
+    return 'center';
+  }
+  relativeWidth () {
+    return this.size * 1.1 + 0.5;
+  }
+  content () {
+    return " ";
+  }
+  classId () {
+    return "box";
+  }
+}
+
+const generateSuite = (option, generator, renderer) => {
   const pages = option.pages || DEFAULT_PAGES;
   renderer.renderSuiteHeader();
-  let first = new WeighedRandom(option.first, (option.first.resetRandom)?PROBLEMS_PER_PAGE:PROBLEMS_PER_PAGE*pages);
-  if (option.randomizeSecond) {
-    let second = new WeighedRandom(option.second);
-    for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-      generatePage(first, second, renderer, option.header, option.footer, option.box);
-      if (option.first.resetRandom) {
-        first.reset();
-      }
-    }
-  } else {
-    const secondRand = new WeighedRandom(option.second);
-    for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-      let secondVal = secondRand.pick();
-      let second = new WeighedRandom({from:secondVal, to:secondVal});
-      generatePage(first, second, renderer, option.header, option.footer, option.box);
-      if (option.first.resetRandom) {
-        first.reset();
-      }
-    }
-  }
+  const content = generator.generate(pages, option);
+  
+  renderer.resetGrid();
+  content.forEach((page, pageIndex)=>{
+    renderer.renderPageHeader(option.header);
+    // Gemetry
+    let maxWidths = [];
+    page.forEach((problem, problemIndex)=>{
+      problem.forEach((item, colIndex)=>{
+        if (maxWidths.length < colIndex+1) {
+          maxWidths.push(0);
+        }
+        maxWidths[colIndex] = Math.max(maxWidths[colIndex], item.relativeWidth());
+      });
+    });
+    console.log(maxWidths);
+    renderer.setGrid(pageIndex, maxWidths);
+    // Geometry -> Stylesheet
+    
+    page.forEach((problem, problemIndex)=>{
+      renderer.renderProblem(problem, pageIndex, problemIndex);
+    });
+    renderer.renderPageFooter(option.footer);
+  });
+  
   renderer.renderSuiteFooter();
 };
 
-const generatePug = () => {
-  const option =  {
-    first : {from:1, to:20},
-    second : {from:4, to:4},
-    randomizeSecond : false,
-    pages : 4
-  };
-  generateSuite(option, new PugRenderer());
-};
-const generateHtml = () => {
-  const str = document.getElementById("conf").value;
-  let option;
-  try {
-    option = JSON.parse(str);
-  } catch (e) {
-    return;
-  }
-  generateSuite(option, new HtmlRenderer());
-  localStorage.setItem('mathHomework', str);
-}
-const reset = () => {
-  localStorage.removeItem('mathHomework');
-  location.reload();
-};
-window.onload = () => {
-  console.log("onload");
-  let saved = localStorage.getItem('mathHomework');
+const initGenerator = (problemGenerator, uiPrefix, storageKey)=>{
+  let saved = localStorage.getItem(storageKey);
   if (saved) {
-    document.getElementById("conf").value = saved;
+    document.getElementById(uiPrefix + "_conf").value = saved;
   }
+  document.getElementById(uiPrefix + "_generate").addEventListener('click', ()=>{
+    const str = document.getElementById(uiPrefix + "_conf").value;
+    let option;
+    try {
+      option = JSON.parse(str);
+    } catch (e) {
+      return;
+    }
+    generateSuite(option, problemGenerator, new HtmlRenderer());
+    localStorage.setItem(storageKey, str);
+  });
+  document.getElementById(uiPrefix + "_reset").addEventListener('click', ()=>{
+    localStorage.removeItem(storageKey);
+    location.reload();
+  });
 }
+initGenerator(new BasicAddition(), 'addition', 'mathHomework');
+initGenerator(new BasicSubtraction(), 'subtraction', 'mathHomeworkSubtraction');

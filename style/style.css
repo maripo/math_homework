@@ -8,6 +8,9 @@ body {
   margin:0;
   width: 50%;
   box-sizing: border-box;
+  height:720px;
+  display:flex;
+  flex-direction: column;
 }
 .page:nth-child(2n) {
   /* Left */
@@ -24,7 +27,6 @@ body {
   display: flex;
   flex-direction: row;
   justify-content: space-around;
-  
 }
 .num-ref__num {
   width:100%;
@@ -38,54 +40,56 @@ body {
   border-right:1px solid #888;
 }
 .page__body {
-  padding-left:2em;
+  padding-left:1em;
+  display:flex;
+  flex-direction: column;
+  flex: 1;
 }
 .page__footer {
   height: 48px;
 }
 /* Problem */
 .problem {
+  flex: 1;
   font-size:0;
-  line-height:86px;
-}
-.problem--compact {
-  line-height: 78px!important;
+  display:flex;
+  flex-direction: row;
+  align-items:center;;
 }
 .problem > div {
 }
-.problem__number {
+
+/* Base class */
+.problem__item {
+  display:block;
   font-size: 24px;
-  display:inline-block;
-  width:60px;
-  text-align: center;
-  vertical-align: middle;
-  color:#888;
+  line-height: 100%;
+  margin:0 0.3rem;
 }
-.problem__first {
+
+/* Variants */
+.problem__item--index {
+  font-size: 24px;
+}
+.problem__item--number {
   font-size: 48px;
-  display:inline-block;
-  width:64px;
-  text-align: right;
-  vertical-align: middle;
 }
-.problem__second {
+.problem__item--operand {
   font-size: 48px;
-  display:inline-block;
-  vertical-align: middle;
-  width:44px;
-  
 }
-.problem__mark {
+.problem__item--box {
   font-size: 48px;
-  display:inline-block;
-  width:64px;
-  text-align: center;
-  vertical-align: middle;
+  border: 1px solid #aaa;
+  min-height:1.2em;
 }
-.problem__box {
-  width:120px;
-  line-height: 54px;
-  border: 1px solid #ddd;
-  display:inline-block;
-  vertical-align: middle;
+
+/* Alignment */
+.a-left {
+  text-align:left;
+}
+.a-center {
+  text-align:center;
+}
+.a-right {
+  text-align:right;
 }
