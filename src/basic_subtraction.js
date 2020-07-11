@@ -1,9 +1,9 @@
 class BasicSubtraction {
   constructor () {
   }
-  _generatePage (first, second, option/*, renderer, header, footer, box*/) {
+  _generatePage (first, second, problemsPerPage, option) {
     let problems = [];
-    for (let problemIndex=0; problemIndex<PROBLEMS_PER_PAGE; problemIndex++) {
+    for (let problemIndex=0; problemIndex<problemsPerPage; problemIndex++) {
       const valFirst = first.pick();
       const valSecond = second.pick();
       const answer = valFirst - valSecond;
@@ -21,13 +21,13 @@ class BasicSubtraction {
     }
     return problems;
   }
-  generate (pages, option) {
-    let first = new WeighedRandom(option.first, (option.first.resetRandom)?PROBLEMS_PER_PAGE:PROBLEMS_PER_PAGE*pages);
+  generate (pages, problemsPerPage, option) {
+    let first = new WeighedRandom(option.first, (option.first.resetRandom)?problemsPerPage:problemsPerPage*pages);
     let suite = [];
     if (option.randomizeSecond) {
       let second = new WeighedRandom(option.second);
       for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-        const pageContent = this._generatePage(first, second, option);
+        const pageContent = this._generatePage(first, second, problemsPerPage, option);
         suite.push(pageContent);
         if (option.first.resetRandom) {
           first.reset();
@@ -38,7 +38,7 @@ class BasicSubtraction {
       for (let pageIndex=0; pageIndex<pages; pageIndex++) {
         let secondVal = secondRand.pick();
         let second = new WeighedRandom({from:secondVal, to:secondVal});
-        const pageContent = this._generatePage(first, second, option);
+        const pageContent = this._generatePage(first, second, problemsPerPage, option);
         suite.push(pageContent);
         if (option.first.resetRandom) {
           first.reset();

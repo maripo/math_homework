@@ -211,7 +211,8 @@ class ItemBox {
 const generateSuite = (option, generator, renderer) => {
   const pages = option.pages || DEFAULT_PAGES;
   renderer.renderSuiteHeader();
-  const content = generator.generate(pages, option);
+  const problemsPerPage = option.problemsPerPage || PROBLEMS_PER_PAGE;
+  const content = generator.generate(pages, problemsPerPage, option);
   
   renderer.resetGrid();
   content.forEach((page, pageIndex)=>{
