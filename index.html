@@ -55,6 +55,29 @@
       </div>
     </section>
     
+    
+    <!-- Division -->
+    <script type="text/javascript" src="src/basic_division.js"></script>
+    <section>
+      <h2>Basic division</h2>
+      <div>
+        <textarea id="division_conf" cols="80" rows="8">
+{
+    "header" : {"from":1, "to":10},
+    "denominator" : {"from":1, "to":9, "randCoeff":0.25, "resetRandom":true},
+    "result" : {"from":1, "to":9},
+    "remainder" : false,
+    "randomizeResult" : false,
+    "pages" : 4,
+    "box" : true
+  }</textarea>
+      </div>
+      <div>
+        <input type="button" id="division_generate" value="Generate"/>
+        <input type="button" id="division_reset" value="Reset"/>
+      </div>
+    </section>
+    
     <script type="text/javascript" src="src/index.js"></script>
   </body>
 </html>

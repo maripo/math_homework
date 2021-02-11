@@ -82,6 +82,10 @@ body {
   border: 1px solid #aaa;
   min-height:1.2em;
 }
+.problem__item--space {
+  font-size: 100%;
+  min-height:1.2em;
+}
 
 /* Alignment */
 .a-left {

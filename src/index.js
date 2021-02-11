@@ -131,7 +131,7 @@ class WeighedRandom {
     const nextIndex = this.nextIndex();
     this.nums.splice(0,1);
     if (this.fullRange) {
-      console.log(this.nums.join(","))
+      // console.log(this.nums.join(","))
     } else {
       this.nums.splice(nextIndex, 0, num);
     }
@@ -195,8 +195,9 @@ class ItemNumber {
   }
 }
 class ItemBox {
-  constructor (answer) {
-    this.size = (''+answer).length;
+  constructor (value, invisible) {
+    this.size = ('' + value).length;
+    this.invisible = invisible===true;
   }
   align () {
     return 'center';
@@ -208,7 +209,7 @@ class ItemBox {
     return " ";
   }
   classId () {
-    return "box";
+    return (this.invisible) ? "space" : "box";
   }
 }
 
@@ -231,7 +232,7 @@ const generateSuite = (option, generator, renderer) => {
         maxWidths[colIndex] = Math.max(maxWidths[colIndex], item.relativeWidth());
       });
     });
-    console.log(maxWidths);
+    // console.log(maxWidths);
     renderer.setGrid(pageIndex, problemsPerPage, maxWidths);
     // Geometry -> Stylesheet
     
@@ -267,3 +268,4 @@ const initGenerator = (problemGenerator, uiPrefix, storageKey)=>{
 }
 initGenerator(new BasicAddition(), 'addition', 'mathHomework');
 initGenerator(new BasicSubtraction(), 'subtraction', 'mathHomeworkSubtraction');
+initGenerator(new BasicDivision(), 'division', 'mathHomeworkDivision');
