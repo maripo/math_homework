@@ -33,10 +33,10 @@ class BasicDivision {
     if (option.remainder && option.denominator.to <= 1) {
       option.denominator.to = 2;
     }
-    let denominator = new WeighedRandom(option.denominator, (option.denominator.resetRandom)? problemsPerPage:problemsPerPage*pages);
+    let result = new WeighedRandom(option.result, (option.result.resetRandom)? problemsPerPage:problemsPerPage*pages);
     let suite = [];
-    if (option.randomizeResult) {
-      let result = new WeighedRandom(option.result);
+    if (option.randomizeDenominator) {
+      let denominator = new WeighedRandom(option.denominator);
       for (let pageIndex=0; pageIndex<pages; pageIndex++) {
         const pageContent = this._generatePage(denominator, result, option.remainder, problemsPerPage, option);
         suite.push(pageContent);
@@ -45,10 +45,10 @@ class BasicDivision {
         }
       }
     } else {
-      const resultRand = new WeighedRandom(option.result);
+      const denominatorRand = new WeighedRandom(option.denominator);
       for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-        let resultVal = resultRand.pick();
-        let result = new WeighedRandom({from:resultVal, to:resultVal});
+        let denominatorVal = denominatorRand.pick();
+        let denominator = new WeighedRandom({from:denominatorVal, to:denominatorVal});
         const pageContent = this._generatePage(denominator, result, option.remainder, problemsPerPage, option);
         suite.push(pageContent);
         if (option.denominator.resetRandom) {
