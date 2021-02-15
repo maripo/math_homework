@@ -64,7 +64,8 @@ body {
   display:block;
   font-size: 24px;
   line-height: 100%;
-  margin:0 0.3em;
+  /* margin:0 0.3em; */
+  margin:0 0.12em;
 }
 
 /* Variants */

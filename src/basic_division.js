@@ -1,14 +1,22 @@
 class BasicDivision {
   constructor () {
   }
-  _generatePage (denominator, result, remainder, problemsPerPage, option) {
+  _generatePage (denominator, result, remainder, maxRemainder, problemsPerPage, option) {
     let problems = [];
     for (let problemIndex=0; problemIndex<problemsPerPage ; problemIndex++) {
       const denominatorValue = denominator.pick();
       const resultValue = result.pick();
       let remainderValue = 0;
       if (remainder && denominatorValue > 1) {
-        remainderValue = Math.ceil(Math.random() * (denominatorValue - 1));
+        if (maxRemainder > 0) {
+          remainderValue = Math.ceil(Math.random() * Math.min(denominatorValue - 1, maxRemainder));
+        } else {
+          // Remainder range not specified
+          remainderValue = Math.ceil(Math.random() * (denominatorValue - 1));
+        }
+        // TODO remove it
+        remainderValue = 2;
+        
       }
       const numeratorValue = denominatorValue * resultValue + remainderValue;
       let items = [];
@@ -38,7 +46,7 @@ class BasicDivision {
     if (option.randomizeDenominator) {
       let denominator = new WeighedRandom(option.denominator);
       for (let pageIndex=0; pageIndex<pages; pageIndex++) {
-        const pageContent = this._generatePage(denominator, result, option.remainder, problemsPerPage, option);
+        const pageContent = this._generatePage(denominator, result, option.remainder, option.maxRemainder, problemsPerPage, option);
         suite.push(pageContent);
         if (option.denominator.resetRandom) {
           denominator.reset();
@@ -49,7 +57,7 @@ class BasicDivision {
       for (let pageIndex=0; pageIndex<pages; pageIndex++) {
         let denominatorVal = denominatorRand.pick();
         let denominator = new WeighedRandom({from:denominatorVal, to:denominatorVal});
-        const pageContent = this._generatePage(denominator, result, option.remainder, problemsPerPage, option);
+        const pageContent = this._generatePage(denominator, result, option.remainder, option.maxRemainder, problemsPerPage, option);
         suite.push(pageContent);
         if (option.denominator.resetRandom) {
           denominator.reset();
