@@ -1,6 +1,16 @@
 class BasicDivision {
   constructor () {
   }
+  // Format (none/number/box)
+  _item (value, format) {
+    if (format == "none") {
+      return new ItemBox(value, true);
+    } else if (format == "number") {
+      return new ItemNumber(value);
+    } else {
+      return new ItemBox(value);
+    }
+  }
   _generatePage (denominator, result, remainder, problemsPerPage, option) {
     let problems = [];
     for (let problemIndex=0; problemIndex<problemsPerPage ; problemIndex++) {
@@ -14,15 +24,24 @@ class BasicDivision {
       }
       const numeratorValue = denominatorValue * resultValue + remainderValue;
       let items = [];
+      
       items.push(new ItemIndex(problemIndex));
-      items.push(new ItemNumber(numeratorValue));
-      items.push(new ItemOperand('÷'));
-      items.push(new ItemNumber(denominatorValue));
-      items.push(new ItemOperand('='));
-      items.push(new ItemBox(resultValue, !option.box));
-      if (remainderValue > 0 && option.box) {
-        items.push(new ItemOperand('...'));
-        items.push(new ItemBox(remainderValue, !option.box));
+      if (!option.subtractionFormat) {
+        items.push(new ItemNumber(numeratorValue));
+        items.push(new ItemOperand('÷'));
+        items.push(new ItemNumber(denominatorValue));
+        items.push(new ItemOperand('='));
+        items.push(this._item(resultValue, option.result.format));
+        if (remainderValue > 0 && option.remainder.format != "none") {
+          items.push(new ItemOperand('...'));
+          items.push(this._item(remainderValue, option.remainder.format));
+        }
+      } else {
+        items.push(new ItemNumber(numeratorValue));
+        items.push(new ItemOperand('&#xFF0D'));
+        items.push(new ItemNumber(denominatorValue * resultValue));
+        items.push(new ItemOperand('='));
+        items.push(this._item(remainderValue, option.remainder.format));
       }
       problems.push(items);
     }
