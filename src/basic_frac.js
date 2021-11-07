@@ -68,7 +68,7 @@ class UnitNumber {
     return {
       heightUpper: SIZE_BASE/2 + MARGIN,
       heightLower: SIZE_BASE/2 + MARGIN,
-      width: SIZE_BASE + MARGIN * 2
+      width: SIZE_BASE * (""+this.value).length * 0.65 + MARGIN * 2
     };
   }
   calcAbsRect(container) {
@@ -80,7 +80,6 @@ class UnitNumber {
 function drawTextInRect (ctx, rect, size, text) {
   ctx.font = size + "px YuKyokasho"
   let mt = ctx.measureText(text);
-  console.log(mt)
   ctx.fillText(text, rect.x + (rect.width-mt.width)/2, rect.y + size);
 
 }
@@ -114,11 +113,12 @@ class UnitMark {
 class UnitBox {
   constructor (data, depth) {
     this.size = data.size;
+    this.width = SIZE_BASE *  0.75 * (this.size + 0.25);
 
   }
   draw (rect, ctx) {
     ctx.beginPath()
-    ctx.strokeRect(rect.x+MARGIN*2, rect.y, SIZE_BASE * this.size, SIZE_BASE);
+    ctx.strokeRect(rect.x+MARGIN*2, rect.y, this.width, SIZE_BASE);
     ctx.stroke()
   }
   addUnits (units) {
@@ -129,7 +129,7 @@ class UnitBox {
       this.rect = {
         heightUpper: SIZE_BASE/2 + MARGIN,
         heightLower: SIZE_BASE/2 + MARGIN,
-        width: SIZE_BASE * this.size + MARGIN * 4
+        width: this.width + MARGIN * 4,
       };
     }
     return this.rect;
@@ -165,7 +165,6 @@ class UnitFraction {
     }
     ctx.moveTo(rect.x + intWidth, y);
     ctx.lineTo(rect.x + rect.width, y);
-    console.log(rect)
     ctx.stroke()
   }
   addUnits (units) {
@@ -317,32 +316,120 @@ function toUnit (data, depth) {
     }
   }
 }
-function draw () {
+function draw (index, data, container) {
   // Turn data to objects
-  const equation = toUnit(DEMO_DATA, 0);
+  const equation = toUnit(data, 0);
   const rect = equation.calcRect();
   const units = [];
   equation.addUnits(units);
   equation.calcAbsRect({x:MARGIN, y:MARGIN, width:rect.width, heightUpper:rect.heightUpper, heightLower:rect.heightLower});
   
-  const canvas = document.getElementById("canvas");
+  // const canvas = document.getElementById("canvas");
+  const canvas = document.createElement("canvas");
+  canvas.width = rect.width + MARGIN;
+  canvas.height = rect.heightUpper + rect.heightLower + MARGIN;
   const ctx = canvas.getContext("2d");
-  ctx.lineWidth = style.width;
+  ctx.lineWidth = 1;
   ctx.lineJoin = "round";
   ctx.lineCap = "round";
-  ctx.strokeStyle = style.color;
+  ctx.strokeStyle = "#666";
+  ctx.fillStyle = "#666";
   units.forEach((unit)=>{
     const rect = unit.absRect;
     unit.draw(unit.absRect, ctx);
-    /*
-    ctx.beginPath()
-    ctx.strokeRect(rect.x+2, rect.y+2, rect.width-4, rect.heightUpper+rect.heightLower-4);
-    ctx.stroke()
-    */
   });
-  console.log(equation)
+  const div = document.createElement("div");
+  div.className = "problem";
+  const problemNum = document.createElement("div");
+  problemNum.className = "problem__num";
+  problemNum.innerHTML = "(" + (index+1) + ")";
+  div.appendChild(problemNum)
+  div.appendChild(canvas);
+  container.appendChild(div)
+  // problemNum.style.marginTop = (rect.heightUpper + MARGIN - problemNum.clientHeight/2) + "px";
 
 }
+function relPrime (_a, _b) {
+  let a = _a;
+  let b = _b;
+  while (a > 0 && b > 0) {
+    if (a > b) {
+      a -= b;
+    } else {
+      b -= a;
+    }
+
+  }
+  const result = a == 1 || b == 1;
+  return result;
+  // console.log(_a,_b,result);
+}
+let relPrimeTable = [];
+const FRAC_INT_MAX = 12;
+const MAX_DENOMINATOR = 14;
+
+function pickRandom (array) {
+  return array[Math.floor(Math.random() * array.length)];
+}
+function createProblem () {
+  let pair = pickRandom(pickRandom(relPrimeTable));
+  const numerator = pair[1];
+  const denominator = pair[0];
+  const intg = 1 + Math.floor(Math.random()*numerator);
+  const origNumerator = denominator * intg + numerator;
+  return [
+    {
+      type:Term.Frac,
+      numerator: origNumerator,
+      denominator: denominator
+  
+    },
+    "=",
+    {
+      type:Term.Frac,
+      integer:{
+        type:Term.Box,
+        size: 2,
+      },
+      numerator: {
+        type:Term.Box,
+        size: 2
+      },
+      denominator: denominator
+  
+    }
+  ];
+}
 window.onload = ()=>{
-  draw ();
+  for (let i=1; i<=MAX_DENOMINATOR; i++) {
+    let a = [];
+    for (let j=1; j<i; j++) {
+      if (relPrime(i, j)) {
+        a.push([i, j]);
+      }
+    }
+    if (a.length > 0) {
+      relPrimeTable.push(a)
+    }
+  }
+  /*
+  <div class="page">
+  <div id="problems" class="page__body"></div>
+  </div>
+  */
+  const problemsPerPage = 5;
+  const numOfPages = 4;
+  for (let i=0; i<numOfPages; i++) {
+    let page = document.createElement("div");
+    page.className = "page";
+    let pageBody = document.createElement("div");
+    pageBody.className = "page__body";
+    page.appendChild(pageBody);
+    document.body.appendChild(page);
+    for (let j=0; j<problemsPerPage; j++) {
+      const num = i * problemsPerPage + j;
+      draw (num, createProblem(), pageBody);
+    }
+  }
+
 };
