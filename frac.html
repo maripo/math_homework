@@ -4,11 +4,33 @@
     <meta charset="utf-8"/>
     <link rel="stylesheet" href="style/style.css">
     <link rel="stylesheet" href="style/frac.css">
-    <script type="text/javascript" src="src/basic_frac.js"></script>
     <!-- Dynamic styles here -->
     <style id="style"></style>
-    <title>Math Homework</title>
+    <title>Math Homework (Fraction)</title>
   </head>
   <body>
+    <div id="pages"></div>
+    
+    <h1>Math homework generator (fraction)</h1>
+    <section>
+      <h2>Integer to Fraction</h2>
+      <div>
+        <textarea id="fraction_int_to_conf" cols="80" rows="8">
+{
+    "int" : {"from":2, "to":9, "randCoeff":0.25, "resetRandom":true},
+    "denominator" : {"from":2, "to":24, "randCoeff": 0.25},
+    "problemsPerPage" : 5,
+    "pages" : 4
+  }</textarea>
+      </div>
+      <div>
+        <input type="button" id="fraction_int_to_generate" value="Generate"/>
+        <input type="button" id="fraction_int_to_reset" value="Reset"/>
+      </div>
+    </section>
+    <script type="text/javascript" src="src/math_homework.js"></script>
+    <script type="text/javascript" src="src/frac_lib.js"></script>
+    <script type="text/javascript" src="src/basic_frac.js"></script>
   </body>
 </html>
+
