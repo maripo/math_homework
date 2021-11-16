@@ -126,6 +126,7 @@ class ItemFraction {
     return (this.invisible) ? "space" : "box";
   }
 }
+// Int to Fraction
 class FractionIntTo {
   constructor () {
 
@@ -144,7 +145,50 @@ class FractionIntTo {
           size: 2
         },
         denominator: vDenominator
-    
+      }
+    ];
+  }
+  _generatePage (problemsPerPage, option) {
+    let problems = [];
+    let rInt = new WeighedRandom(option.int, problemsPerPage);
+    let rDenominator = new WeighedRandom(option.denominator, problemsPerPage);
+    for (let i=0; i<problemsPerPage; i++) {
+      let problem = [];
+      const index = new ItemIndex(i);
+      problem.push(index)
+      problem.push(new ItemFraction(this._generateProblem(rInt, rDenominator)));
+      problems.push(problem);
+    }
+    return problems;
+  }
+  generate (pages, problemsPerPage, option) {
+    let suite = [];
+    for (let pageIndex=0; pageIndex<pages; pageIndex++) {
+      const pageContent = this._generatePage(problemsPerPage, option);
+      suite.push(pageContent);
+    }
+    return suite;
+  }
+}
+// Fraction to Int
+class FractionToInt {
+  constructor () {
+
+  }
+  _generateProblem (rInt, rDenominator) {
+    const vInt = rInt.pick();
+    const vDenominator = rDenominator.pick();
+    const vNumerator = vDenominator * vInt;
+    return [
+      {
+        type:Term.Frac,
+        numerator: vNumerator,
+        denominator: vDenominator
+      },
+      "=",
+      {
+        type:Term.Box,
+        size: 2
       }
     ];
   }
@@ -184,3 +228,4 @@ for (let i=1; i<=MAX_DENOMINATOR; i++) {
 }
 
 initGenerator(new FractionIntTo(), 'fraction_int_to', 'mathHomeworkFrationIntTo');
+initGenerator(new FractionToInt(), 'fraction_to_int', 'mathHomeworkFrationToInt');
