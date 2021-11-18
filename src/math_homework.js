@@ -29,6 +29,7 @@ class WeighedRandom {
     this.reset()
   }
   reset () {
+    this.value = null;
     var nums = [];
     this.size = this.range.to - this.range.from + 1;
     const randCoeff = (this.range.randCoeff >= 0) ? this.range.randCoeff : 1;
@@ -62,6 +63,16 @@ class WeighedRandom {
         this.nums.splice(nextIndex, 0, num);
     }
     return num;
+  }
+  // For new FW
+  get () {
+    if (!this.value) {
+      this.value = this.pick();
+    }
+    return this.value;
+  }
+  next () {
+    this.value = this.pick();
   }
 }
 const DEFAULT_PAGES = 2;
@@ -217,12 +228,12 @@ class ItemBox {
   }
 }
 
-const generateSuite = (option, generator, renderer) => {
+const generateSuiteLegacy = (option, generator, renderer) => {
   const pages = option.pages || DEFAULT_PAGES;
-  renderer.renderSuiteHeader();
   const problemsPerPage = option.problemsPerPage || PROBLEMS_PER_PAGE;
   const content = generator.generate(pages, problemsPerPage, option);
   
+  renderer.renderSuiteHeader();
   renderer.resetGrid();
   content.forEach((page, pageIndex)=>{
     renderer.renderPageHeader(option.header);
@@ -250,6 +261,81 @@ const generateSuite = (option, generator, renderer) => {
   
   renderer.renderSuiteFooter();
 };
+const generateSuite = (option, generator, renderer) => {
+  const keys = Object.keys(option.fields)
+  let rands = {};
+  let values = {};
+  const pages = option.pages || DEFAULT_PAGES;
+  const problemsPerPage = option.problemsPerPage || PROBLEMS_PER_PAGE;
+  keys.forEach((key)=>{
+    // randReset && randNext
+    const field = option.fields[key];
+    let count;
+    if (field.randNext == "page") {
+      count = pages;
+    } else if (field.randReset == "page") {
+      count = problemsPerPage;
+    } else {
+      count = pages * problemsPerPage;
+    }
+    rands[key] = new WeighedRandom(field, count);
+  });
+  // get & next
+  let content = [];
+  for (let pageIndex = 0; pageIndex<pages; pageIndex++) {
+    let problems = [];
+    for (let problemIndex = 0; problemIndex<problemsPerPage; problemIndex++) {
+      keys.forEach((key)=>{
+        values[key] = rands[key].get();
+      });
+      let problem = generator.generateProblem(problemIndex, values, option);
+      problems.push(problem);
+      keys.forEach((key)=>{
+        if (option.fields[key].randNext != "page") {
+          rands[key].next();
+        }
+      });
+    }
+    keys.forEach((key)=>{
+      if (option.fields[key].randNext == "page") {
+        rands[key].next();
+      }
+      if (option.fields[key].randReset == "page") {
+        rands[key].reset();
+      }
+    });
+    content.push(problems);
+  }
+  console.log(content)
+  renderer.renderSuiteHeader();
+  renderer.resetGrid();
+  content.forEach((page, pageIndex)=>{
+    renderer.renderPageHeader(option.header);
+    // Geometry
+    let maxWidths = [];
+    console.log(page)
+    page.forEach((problem, problemIndex)=>{
+      
+      problem.forEach((item, colIndex)=>{
+        if (maxWidths.length < colIndex+1) {
+          maxWidths.push(0);
+        }
+        console.log(item)
+        maxWidths[colIndex] = Math.max(maxWidths[colIndex], item.relativeWidth());
+      });
+    });
+    // console.log(maxWidths);
+    renderer.setGrid(pageIndex, problemsPerPage, maxWidths);
+    // Geometry -> Stylesheet
+    
+    page.forEach((problem, problemIndex)=>{
+      renderer.renderProblem(problem, pageIndex, problemIndex);
+    });
+    renderer.renderPageFooter(option.footer);
+  });
+  
+  renderer.renderSuiteFooter();
+}
 
 const initGenerator = (problemGenerator, uiPrefix, storageKey)=>{
   let saved = localStorage.getItem(storageKey);
@@ -264,7 +350,13 @@ const initGenerator = (problemGenerator, uiPrefix, storageKey)=>{
     } catch (e) {
       return;
     }
-    generateSuite(option, problemGenerator, new HtmlRenderer());
+    if (problemGenerator.useLegacyFW && problemGenerator.useLegacyFW()) {
+      console.log("Use legacy FW.");
+      generateSuiteLegacy(option, problemGenerator, new HtmlRenderer());
+    } else {
+      console.log("Use new FW.");
+      generateSuite(option, problemGenerator, new HtmlRenderer());
+    }
     localStorage.setItem(storageKey, str);
   });
   document.getElementById(uiPrefix + "_reset").addEventListener('click', ()=>{

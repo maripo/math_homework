@@ -17,10 +17,12 @@
       <div>
         <textarea id="fraction_int_to_conf" cols="80" rows="8">
 {
-    "int" : {"from":2, "to":9, "randCoeff":0.25, "resetRandom":true},
-    "denominator" : {"from":2, "to":24, "randCoeff": 0.25},
     "problemsPerPage" : 5,
-    "pages" : 4
+    "pages" : 4,
+    "fields": {
+      "int" : {"from":2, "to":9, "randCoeff":0.25, "randReset":"page", "randNext":"problem"},
+      "denominator" : {"from":2, "to":24, "randCoeff":0.25, "randNext":"page"}
+    }
   }</textarea>
       </div>
       <div>
@@ -34,10 +36,12 @@
       <div>
         <textarea id="fraction_to_int_conf" cols="80" rows="8">
 {
-    "int" : {"from":2, "to":9, "randCoeff":0.25, "resetRandom":true},
-    "denominator" : {"from":2, "to":24, "randCoeff": 0.25},
     "problemsPerPage" : 5,
-    "pages" : 4
+    "pages" : 4,
+    "fields": {
+      "int" : {"from":2, "to":9, "randCoeff":0.25, "randReset":"page", "randNext":"problem"},
+      "denominator" : {"from":2, "to":24, "randCoeff":0.25, "randNext":"page"}
+    }
   }</textarea>
       </div>
       <div>

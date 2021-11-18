@@ -21,11 +21,13 @@
         <textarea id="addition_conf" cols="80" rows="8">
 {
     "header" : {"from":1, "to":10},
-    "first" : {"from":1, "to":19, "randCoeff":0.25, "resetRandom":true},
-    "second" : {"from":4, "to":4},
-    "randomizeSecond" : false,
+    "problemsPerPage" : 8,
     "pages" : 4,
-    "box" : true
+    "box" : true,
+    "fields" : {
+      "first" : {"from":1, "to":19, "randCoeff":0.25, "randReset":"page", "randNext":"problem"},
+      "second" : {"from":2, "to":4, "randNext":"page"}
+    }
   }</textarea>
       </div>
       <div>
@@ -42,11 +44,12 @@
         <textarea id="subtraction_conf" cols="80" rows="8">
 {
     "header" : {"from":1, "to":10},
-    "first" : {"from":5, "to":10, "randCoeff":0.25, "resetRandom":true},
-    "second" : {"from":1, "to":3},
-    "randomizeSecond" : false,
     "pages" : 4,
-    "box" : true
+    "box" : true,
+    "fields" : {
+      "first" : {"from":5, "to":10, "randCoeff":0.25, "resetRandom":true},
+      "second" : {"from":1, "to":3}
+    }
   }</textarea>
       </div>
       <div>
@@ -69,7 +72,13 @@
     "randomizeDenominator" : true,
     "problemsPerPage" : 10,
     "pages" : 4,
-    "subtractionFormat" :  false
+    "subtractionFormat" :  false,
+    "fields" : {
+      "denominator" : {"from":1, "to":9, "randCoeff":0.25, "resetRandom":true},
+      "result" : {"from":1, "to":9, "format":"box" },
+      "remainder" : {"from":1, "to":9, "format":"box"}
+    }
+
   }</textarea>
       </div>
       <div>
