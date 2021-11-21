@@ -1,3 +1,6 @@
+
+const FRAC_INT_MAX = 12;
+const MAX_DENOMINATOR = 20;
 const Term = {
     Mark: 1,
     Num: 2,
@@ -128,7 +131,7 @@ const Term = {
         this.rect = {
           heightUpper: SIZE_BASE/2 + MARGIN,
           heightLower: SIZE_BASE/2 + MARGIN,
-          width: this.width + MARGIN * 6,
+          width: this.width + MARGIN * 4,
         };
       }
       return this.rect;
@@ -192,7 +195,7 @@ const Term = {
         heightLower = Math.max(heightLower, denominatorRect.heightUpper + denominatorRect.heightLower);
         width += Math.max(numeratorRect.width, denominatorRect.width);
         this.rect = {
-          width:width,
+          width:width  + MARGIN*2,
           heightUpper:heightUpper,
           heightLower:heightLower
         };
@@ -277,6 +280,28 @@ const Term = {
       return this.absRect;
     }
   }
+  class ItemFraction {
+    constructor (equation) {
+      this.equation = equation;
+      this.size = 4;
+    }
+    align () {
+      return 'center';
+    }
+    relativeWidth () {
+      return this.size * 1.1 + 0.5;
+    }
+    content () {
+      if (!this.dom) {
+       
+        this.dom = draw (this.equation) 
+      }
+      return this.dom;
+    }
+    classId () {
+      return (this.invisible) ? "space" : "box";
+    }
+  }
   function shrinkRect (container, content) {
     const x = container.x + (container.width - content.width)/2;
     const width = content.width;
@@ -355,3 +380,40 @@ const Term = {
     return result;
     // console.log(_a,_b,result);
   }
+/*
+class ItemFraction {
+  constructor (equation) {
+    this.equation = equation;
+    this.size = 4;
+  }
+  align () {
+    return 'center';
+  }
+  relativeWidth () {
+    return this.size * 1.1 + 0.5;
+  }
+  content () {
+    if (!this.dom) {
+     
+      this.dom = draw (this.equation) 
+    }
+    return this.dom;
+  }
+  classId () {
+    return (this.invisible) ? "space" : "box";
+  }
+}
+*/
+// 
+let relPrimeTable = [];
+for (let i=1; i<=MAX_DENOMINATOR; i++) {
+  let a = [];
+  for (let j=1; j<i; j++) {
+    if (relPrime(i, j)) {
+      a.push([i, j]);
+    }
+  }
+  if (a.length > 0) {
+    relPrimeTable.push(a)
+  }
+}

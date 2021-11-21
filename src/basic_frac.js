@@ -1,7 +1,3 @@
-
-const FRAC_INT_MAX = 12;
-const MAX_DENOMINATOR = 20;
-
 function pickRandomFrom (array) {
   return array[Math.floor(Math.random() * array.length)];
 }
@@ -32,26 +28,33 @@ function createProblem () {
     }
   ];
 }
-class ItemFraction {
-  constructor (equation) {
-    this.equation = equation;
-    this.size = 4;
+// Mixed to improper
+class MixedTo {
+  constructor () {
   }
-  align () {
-    return 'center';
-  }
-  relativeWidth () {
-    return this.size * 1.1 + 0.5;
-  }
-  content () {
-    if (!this.dom) {
-     
-      this.dom = draw (this.equation) 
-    }
-    return this.dom;
-  }
-  classId () {
-    return (this.invisible) ? "space" : "box";
+  generateProblem (problemIndex, values) {
+    const box = {
+      type:Term.Box,
+      size: 2.5
+    };
+    const numerator = Math.floor(Math.random() * (values.denominator-1)) + 1;
+    const eq = [
+      {
+        type:Term.Frac,
+        integer: values.int,
+        numerator: numerator,
+        denominator: values.denominator
+    
+      },
+      "=",
+      {
+        type:Term.Frac,
+        numerator: box,
+        denominator: values.denominator
+    
+      }
+    ];
+    return [new ItemIndex(problemIndex), new ItemFraction(eq)];
   }
 }
 // Int to Fraction
@@ -96,19 +99,7 @@ class FractionToInt {
   }
 }
 
-// 
-let relPrimeTable = [];
-for (let i=1; i<=MAX_DENOMINATOR; i++) {
-  let a = [];
-  for (let j=1; j<i; j++) {
-    if (relPrime(i, j)) {
-      a.push([i, j]);
-    }
-  }
-  if (a.length > 0) {
-    relPrimeTable.push(a)
-  }
-}
 
 initGenerator(new FractionIntTo(), 'fraction_int_to', 'mathHomeworkFrationIntTo');
 initGenerator(new FractionToInt(), 'fraction_to_int', 'mathHomeworkFrationToInt');
+initGenerator(new MixedTo(), 'fraction_mixed_to', 'mathHomeworkMixedTo');
