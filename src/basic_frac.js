@@ -1,43 +1,19 @@
 function pickRandomFrom (array) {
   return array[Math.floor(Math.random() * array.length)];
 }
-function createProblem () {
-  let pair = pickRandomFrom(pickRandomFrom(relPrimeTable));
-  const numerator = pair[1];
-  const denominator = pair[0];
-  const intg = 1 + Math.floor(Math.random()*FRAC_INT_MAX);
-  const origNumerator = denominator * intg + numerator;
-  const box = {
-    type:Term.Box,
-    size: 2.5
-  };
-  return [
-    {
-      type:Term.Frac,
-      integer: intg,
-      numerator: numerator,
-      denominator: denominator
-  
-    },
-    "=",
-    {
-      type:Term.Frac,
-      numerator: box,
-      denominator: denominator
-  
-    }
-  ];
-}
+
 // Mixed to improper
 class MixedTo {
   constructor () {
   }
-  generateProblem (problemIndex, values) {
+  generateProblem (problemIndex, values, option) {
+    console.log(values)
+    console.log(option)
     const box = {
       type:Term.Box,
       size: 2.5
     };
-    const numerator = Math.floor(Math.random() * (values.denominator-1)) + 1;
+    const numerator = (values.numerator - 1) % (values.denominator-1) + 1;
     const eq = [
       {
         type:Term.Frac,
@@ -61,7 +37,7 @@ class MixedTo {
 class FractionIntTo {
   constructor () {
   }
-  generateProblem (problemIndex, values) {
+  generateProblem (problemIndex, values, option) {
     const eq = [
       values.int,
       "=",
@@ -81,7 +57,7 @@ class FractionIntTo {
 class FractionToInt {
   constructor () {
   }
-  generateProblem (problemIndex, values) {
+  generateProblem (problemIndex, values, option) {
     const eq = [
       {
         type:Term.Frac,

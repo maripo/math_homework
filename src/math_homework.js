@@ -239,7 +239,6 @@ const generateSuiteLegacy = (option, generator, renderer) => {
     renderer.renderPageHeader(option.header);
     // Geometry
     let maxWidths = [];
-    console.log(page)
     page.forEach((problem, problemIndex)=>{
       
       problem.forEach((item, colIndex)=>{
@@ -306,21 +305,18 @@ const generateSuite = (option, generator, renderer) => {
     });
     content.push(problems);
   }
-  console.log(content)
   renderer.renderSuiteHeader();
   renderer.resetGrid();
   content.forEach((page, pageIndex)=>{
     renderer.renderPageHeader(option.header);
     // Geometry
     let maxWidths = [];
-    console.log(page)
     page.forEach((problem, problemIndex)=>{
       
       problem.forEach((item, colIndex)=>{
         if (maxWidths.length < colIndex+1) {
           maxWidths.push(0);
         }
-        console.log(item)
         maxWidths[colIndex] = Math.max(maxWidths[colIndex], item.relativeWidth());
       });
     });
